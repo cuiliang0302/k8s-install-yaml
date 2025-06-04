@@ -1,0 +1,35 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  namespace: elk
+  name: elasticsearch
+spec:
+  version: 8.15.5
+  image: harbor.cuiliangblog.cn/elk/elasticsearch:8.15.5 # 自定义镜像地址，如果不指定则从elastic官方镜像仓库拉取
+  nodeSets:
+  - name: all # 节点名称
+    count: 3  # 节点数量
+    volumeClaimTemplates:
+    - metadata:
+        name: elasticsearch-data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 50Gi # 指定master节点存储容量，与pvc容量保持一致。
+        storageClassName: local-storage
+    podTemplate:
+      spec:
+        containers:
+        - name: elasticsearch
+          env:
+          - name: ES_JAVA_OPTS           # 指定节点JVM大小
+            value: "-Xms512m -Xmx512m"
+          resources:
+            limits:											# 资源限制值，通常为JVM的2倍
+              cpu: 1
+              memory: 1Gi
+            requests:										# 资源请求值，通常与JVM保持一致
+              cpu: 0.5
+              memory: 500Mi

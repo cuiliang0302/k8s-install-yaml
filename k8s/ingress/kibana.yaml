@@ -1,0 +1,26 @@
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: kibana-transport
+  namespace: elk
+spec:
+  serverName: "kibana.cuiliangblog.cn"
+  insecureSkipVerify: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kibana
+  namespace: elk
+spec:
+  entryPoints:
+    - websecure             
+  routes:
+  - match: Host(`kibana.cuiliangblog.cn`)
+    kind: Rule
+    services:
+    - name: kibana-kb-http
+      port: 5601
+      serversTransport: kibana-transport
+  tls:
+    secretName: elk-tls

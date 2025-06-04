@@ -1,0 +1,26 @@
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: elasticsearch-transport
+  namespace: elk
+spec:
+  serverName: "elasticsearch.cuiliangblog.cn"
+  insecureSkipVerify: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: elasticsearch
+  namespace: elk
+spec:
+  entryPoints:
+    - websecure                  
+  routes:
+  - match: Host(`elasticsearch.cuiliangblog.cn`)
+    kind: Rule
+    services:
+    - name: elasticsearch-es-http
+      port: 9200
+      serversTransport: elasticsearch-transport
+  tls:
+    secretName: elk-tls

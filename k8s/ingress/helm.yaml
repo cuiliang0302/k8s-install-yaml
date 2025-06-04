@@ -1,0 +1,14 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: helm-dashboard
+  namespace: helm
+spec:
+  entryPoints:
+  - web
+  routes:
+  - match: Host(`helm.cuiliangblog.cn`) # 域名
+    kind: Rule
+    services:
+      - name: helm-dashboard  # 与svc的name一致
+        port: 8080     # 与svc的port一致

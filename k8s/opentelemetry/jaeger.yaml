@@ -1,0 +1,54 @@
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: jaeger
+  namespace: opentelemetry
+spec:
+  image: jaegertracing/jaeger:latest
+  ports:
+  - name: jaeger
+    port: 16686
+  config:
+    service:
+      extensions: [jaeger_storage, jaeger_query]
+      pipelines:
+        traces:
+          receivers: [otlp]    
+          exporters: [jaeger_storage_exporter]
+    extensions:
+      jaeger_query:
+        storage:
+          traces: elasticsearch # 使用elasticsearch
+      jaeger_storage:
+        backends:
+          elasticsearch:
+            server-urls: https://elasticsearch-es-http.elk.svc:9200
+            username: elastic
+            password: your-password
+            tls:
+              skip-host-verify: true
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+    exporters:
+      jaeger_storage_exporter:
+        trace_storage: elasticsearch
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: jaeger
+  namespace: opentelemetry
+spec:
+  entryPoints:
+  - web
+  routes:
+  - match: Host(`jaeger.cuiliangblog.cn`)
+    kind: Rule
+    services:
+      - name: jaeger
+        port: 16686
