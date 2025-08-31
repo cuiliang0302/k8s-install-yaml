@@ -346,6 +346,8 @@ spec:
                         properties:
                           name:
                             type: string
+                          request:
+                            type: string
                     limits:
                       additionalProperties:
                         anyOf:
@@ -562,6 +564,8 @@ spec:
                               type: boolean
                             runAsUser:
                               type: integer
+                            seLinuxChangePolicy:
+                              type: string
                             seLinuxOptions:
                               type: object
                               properties:
@@ -584,6 +588,8 @@ spec:
                               type: array
                               items:
                                 type: integer
+                            supplementalGroupsPolicy:
+                              type: string
                             sysctls:
                               type: array
                               items:
@@ -1014,6 +1020,35 @@ spec:
                               ip:
                                 type: string
                           description: The pod's HostAliases. HostAliases is an optional list of hosts and IPs that will be injected into the Pod's hosts file if specified.
+                        dnsPolicy:
+                          type: string
+                          enum:
+                            - ClusterFirst
+                            - ClusterFirstWithHostNet
+                            - Default
+                            - None
+                          description: "The pod's DNSPolicy. Defaults to `ClusterFirst`. Valid values are `ClusterFirstWithHostNet`, `ClusterFirst`, `Default` or `None`."
+                        dnsConfig:
+                          type: object
+                          properties:
+                            nameservers:
+                              type: array
+                              items:
+                                type: string
+                            options:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  name:
+                                    type: string
+                                  value:
+                                    type: string
+                            searches:
+                              type: array
+                              items:
+                                type: string
+                          description: "The pod's DNSConfig. If specified, it will be merged to the generated DNS configuration based on the DNSPolicy."
                         enableServiceLinks:
                           type: boolean
                           description: Indicates whether information about services should be injected into Pod's environment variables.
@@ -1049,7 +1084,7 @@ spec:
                                     type: boolean
                                   secretName:
                                     type: string
-                                description: Secret to use populate the volume.
+                                description: '`Secret` to use to populate the volume.'
                               configMap:
                                 type: object
                                 properties:
@@ -1070,7 +1105,7 @@ spec:
                                     type: string
                                   optional:
                                     type: boolean
-                                description: ConfigMap to use to populate the volume.
+                                description: '`ConfigMap` to use to populate the volume.'
                               emptyDir:
                                 type: object
                                 properties:
@@ -1083,7 +1118,7 @@ spec:
                                         type: string
                                       format:
                                         type: string
-                                description: EmptyDir to use to populate the volume.
+                                description: '`EmptyDir` to use to populate the volume.'
                               persistentVolumeClaim:
                                 type: object
                                 properties:
@@ -1091,14 +1126,42 @@ spec:
                                     type: string
                                   readOnly:
                                     type: boolean
-                                description: PersistentVolumeClaim object to use to populate the volume.
+                                description: '`PersistentVolumeClaim` object to use to populate the volume.'
+                              csi:
+                                type: object
+                                properties:
+                                  driver:
+                                    type: string
+                                  fsType:
+                                    type: string
+                                  nodePublishSecretRef:
+                                    type: object
+                                    properties:
+                                      name:
+                                        type: string
+                                  readOnly:
+                                    type: boolean
+                                  volumeAttributes:
+                                    additionalProperties:
+                                      type: string
+                                    type: object
+                                description: '`CSIVolumeSource` object to use to populate the volume.'
+                              image:
+                                type: object
+                                properties:
+                                  pullPolicy:
+                                    type: string
+                                  reference:
+                                    type: string
+                                description: '`ImageVolumeSource` object to use to populate the volume.'
                             oneOf:
                               - properties:
                                   secret: {}
                                   configMap: {}
                                   emptyDir: {}
                                   persistentVolumeClaim: {}
-                                required: []
+                                  csi: {}
+                                  image: {}
                           description: Additional volumes that can be mounted to the pod.
                       description: Template for Kafka Bridge `Pods`.
                     apiService:
@@ -1170,6 +1233,48 @@ spec:
                               value:
                                 type: string
                                 description: The environment variable value.
+                              valueFrom:
+                                type: object
+                                properties:
+                                  secretKeyRef:
+                                    type: object
+                                    properties:
+                                      key:
+                                        type: string
+                                      name:
+                                        type: string
+                                      optional:
+                                        type: boolean
+                                    description: Reference to a key in a secret.
+                                  configMapKeyRef:
+                                    type: object
+                                    properties:
+                                      key:
+                                        type: string
+                                      name:
+                                        type: string
+                                      optional:
+                                        type: boolean
+                                    description: Reference to a key in a config map.
+                                oneOf:
+                                  - properties:
+                                      secretKeyRef: {}
+                                    required:
+                                      - secretKeyRef
+                                  - properties:
+                                      configMapKeyRef: {}
+                                    required:
+                                      - configMapKeyRef
+                                description: Reference to the secret or config map property to which the environment variable is set.
+                            oneOf:
+                              - properties:
+                                  value: {}
+                                required:
+                                  - value
+                              - properties:
+                                  valueFrom: {}
+                                required:
+                                  - valueFrom
                           description: Environment variables which should be applied to the container.
                         securityContext:
                           type: object
@@ -1307,6 +1412,48 @@ spec:
                               value:
                                 type: string
                                 description: The environment variable value.
+                              valueFrom:
+                                type: object
+                                properties:
+                                  secretKeyRef:
+                                    type: object
+                                    properties:
+                                      key:
+                                        type: string
+                                      name:
+                                        type: string
+                                      optional:
+                                        type: boolean
+                                    description: Reference to a key in a secret.
+                                  configMapKeyRef:
+                                    type: object
+                                    properties:
+                                      key:
+                                        type: string
+                                      name:
+                                        type: string
+                                      optional:
+                                        type: boolean
+                                    description: Reference to a key in a config map.
+                                oneOf:
+                                  - properties:
+                                      secretKeyRef: {}
+                                    required:
+                                      - secretKeyRef
+                                  - properties:
+                                      configMapKeyRef: {}
+                                    required:
+                                      - configMapKeyRef
+                                description: Reference to the secret or config map property to which the environment variable is set.
+                            oneOf:
+                              - properties:
+                                  value: {}
+                                required:
+                                  - value
+                              - properties:
+                                  valueFrom: {}
+                                required:
+                                  - valueFrom
                           description: Environment variables which should be applied to the container.
                         securityContext:
                           type: object

@@ -14,8 +14,8 @@ stringData:
     default_timezone = Asia/Shanghai
     [database] # 数据库设置
     type = mysql
-    host = 47.122.2.85:3306
+    host = rm-uf6fw060430r4w5w9do.mysql.rds.aliyuncs.com:3306
     name = grafana
-    user = root
-    password = @WSX3edc
+    user = huan_bao
+    password = Aliyun20221123@
 type: Opaque

@@ -5,12 +5,13 @@ Strimzi provides a way to run an [Apache Kafka®](https://kafka.apache.org) clus
 See our [website](https://strimzi.io) for more details about the project.
 
 **!!! IMPORTANT !!!**
-Upgrading to Strimzi 0.32 and newer directly from Strimzi 0.22 and earlier is no longer possible.
-Please follow the [documentation](https://strimzi.io/docs/operators/latest/full/deploying.html#assembly-upgrade-str) for more details.
 
-**!!! IMPORTANT !!!**
-Strimzi 0.43.0 (and any of its patch releases) is the last Strimzi version with support for Kubernetes 1.23 and 1.24.
-From Strimzi 0.44.0 on, Strimzi will support only Kubernetes 1.25 and newer.
+* **Support for ZooKeeper-based clusters and for migration from ZooKeeper-based clusters to KRaft has been removed.**
+  **Please make sure all your clusters are using KRaft before upgrading to Strimzi 0.46.0 or newer!**
+* Support for MirrorMaker 1 has been removed.
+  Please make sure to migrate to MirrorMaker 2 before upgrading to Strimzi 0.46 or newer.
+* [Strimzi EnvVar Configuration Provider](https://github.com/strimzi/kafka-env-var-config-provider) (deprecated in Strimzi 0.38.0) and [Strimzi MirrorMaker 2 Extensions](https://github.com/strimzi/mirror-maker-2-extensions) (deprecated in Strimzi 0.28.0) plugins were removed from Strimzi container images.
+  Please use the Apache Kafka [EnvVarConfigProvider](https://github.com/strimzi/kafka-env-var-config-provider?tab=readme-ov-file#deprecation-notice) and [Identity Replication Policy](https://github.com/strimzi/mirror-maker-2-extensions?tab=readme-ov-file#identity-replication-policy) instead.
 
 ## Introduction
 
@@ -21,23 +22,30 @@ cluster using the [Helm](https://helm.sh) package manager.
 ### Supported Features
 
 * **Manages the Kafka Cluster** - Deploys and manages all of the components of this complex application, including dependencies like Apache ZooKeeper® that are traditionally hard to administer.
-* **KRaft support** - Allows running Apache Kafka clusters in the KRaft mode (without ZooKeeper). 
+* **KRaft support** - Allows running Apache Kafka clusters in the KRaft mode (without ZooKeeper).
 * **Includes Kafka Connect** - Allows for configuration of common data sources and sinks to move data into and out of the Kafka cluster.
 * **Topic Management** - Creates and manages Kafka Topics within the cluster.
 * **User Management** - Creates and manages Kafka Users within the cluster.
 * **Connector Management** - Creates and manages Kafka Connect connectors.
-* **Includes Kafka Mirror Maker 1 and 2** - Allows for mirroring data between different Apache Kafka® clusters.
+* **Includes Kafka MirrorMaker** - Allows for mirroring data between different Apache Kafka® clusters.
 * **Includes HTTP Kafka Bridge** - Allows clients to send and receive messages through an Apache Kafka® cluster via the HTTP protocol.
 * **Includes Cruise Control** - Automates the process of balancing partitions across an Apache Kafka® cluster.
+* **Auto-rebalancing when scaling** - Automatically rebalance the Kafka cluster after a scale-up or before a scale-down.
+* **Tiered storage** - Offloads older, less critical data to a lower-cost, lower-performance storage tier, such as object storage.
 * **Prometheus monitoring** - Built-in support for monitoring using Prometheus.
 * **Grafana Dashboards** - Built-in support for loading Grafana® dashboards via the grafana_sidecar
 
 ### Upgrading your Clusters
 
 To upgrade the Strimzi operator, you can use the `helm upgrade` command.
-The `helm upgrade` command does not upgrade the [Custom Resource Definitions](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/).
-Install the new CRDs manually after upgrading the Cluster Operator.
+**The `helm upgrade` command does not upgrade the [Custom Resource Definitions](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/).**
+**Update the CRDs manually after upgrading the Cluster Operator.**
 You can access the CRDs from our [GitHub release page](https://github.com/strimzi/strimzi-kafka-operator/releases) or find them in the `crd` subdirectory inside the Helm Chart.
+For example, when upgrading to Strimzi 0.46.0, you can do:
+
+```bash
+kubectl apply -f https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.46.0/strimzi-crds-0.46.0.yaml 
+```
 
 The Strimzi Operator understands how to run and upgrade between a set of Kafka versions.
 When specifying a new version in your config, check to make sure you aren't using any features that may have been removed.
@@ -60,14 +68,14 @@ Strimzi is licensed under the [Apache License, Version 2.0](https://github.com/s
 
 ## Prerequisites
 
-- Kubernetes 1.23+
+- Kubernetes 1.25+
 
 ## Installing the Chart
 
 To install the chart with the release name `my-strimzi-cluster-operator`:
 
 ```bash
-$ helm install my-strimzi-cluster-operator oci://quay.io/strimzi-helm/strimzi-kafka-operator
+helm install my-strimzi-cluster-operator oci://quay.io/strimzi-helm/strimzi-kafka-operator
 ```
 
 The command deploys the Strimzi Cluster Operator on the Kubernetes cluster with the default configuration.
@@ -78,7 +86,7 @@ The [configuration](#configuration) section lists the parameters that can be con
 To uninstall/delete the `my-strimzi-cluster-operator` deployment:
 
 ```bash
-$ helm delete my-strimzi-cluster-operator
+helm delete my-strimzi-cluster-operator
 ```
 
 The command removes all the Kubernetes components associated with the operator and deletes the release.
@@ -97,10 +105,11 @@ the documentation for more details.
 | `watchAnyNamespace`                         | Watch the whole Kubernetes cluster (all namespaces)                             | `false`                      |
 | `defaultImageRegistry`                      | Default image registry for all the images                                       | `quay.io`                    |
 | `defaultImageRepository`                    | Default image registry for all the images                                       | `strimzi`                    |
-| `defaultImageTag`                           | Default image tag for all the images except Kafka Bridge                        | `0.43.0`                     |
+| `defaultImageTag`                           | Default image tag for all the images except Kafka Bridge                        | `0.47.0`                     |
+| `deploymentAnnotations`                     | Annotations for the operator deployment                                         | `{}`                         |
 | `image.registry`                            | Override default Cluster Operator image registry                                | `nil`                        |
 | `image.repository`                          | Override default Cluster Operator image repository                              | `nil`                        |
-| `image.name`                                | Cluster Operator image name                                                     | `cluster-operator`           |
+| `image.name`                                | Cluster Operator image name                                                     | `operator`                   |
 | `image.tag`                                 | Override default Cluster Operator image tag                                     | `nil`                        |
 | `image.digest`                              | Override Cluster Operator image tag with digest                                 | `nil`                        |
 | `image.imagePullPolicy`                     | Image pull policy for all pods deployed by Cluster Operator                     | `IfNotPresent`               |
@@ -118,6 +127,7 @@ the documentation for more details.
 | `podDisruptionBudget.enabled`               | Whether to enable the podDisruptionBudget feature                               | `false`                      |
 | `podDisruptionBudget.minAvailable`          | Default value for how many pods must be running in a cluster                    | `1`                          |
 | `podDisruptionBudget.maxUnavailable`        | Default value for how many pods can be down                                     | `nil`                        |
+| `podDisruptionBudget.unhealthyPodEvictionPolicy` | Default value for how to respond to unheathly pods                         | `IfHealthyBudget`                |
 | `extraEnvs`                                 | Extra environment variables for the Cluster operator container                  | `[]`                         |
 | `kafka.image.registry`                      | Override default Kafka image registry                                           | `nil`                        |
 | `kafka.image.repository`                    | Override default Kafka image repository                                         | `nil`                        |
@@ -131,12 +141,6 @@ the documentation for more details.
 | `kafkaConnect.image.tagPrefix`              | Override default Kafka Connect image tag prefix                                 | `nil`                        |
 | `kafkaConnect.image.tag`                    | Override default Kafka Connect image tag and ignore suffix                      | `nil`                        |
 | `kafkaConnect.image.digest`                 | Override Kafka Connect image tag with digest                                    | `nil`                        |
-| `kafkaMirrorMaker.image.registry`           | Override default Kafka Mirror Maker image registry                              | `nil`                        |
-| `kafkaMirrorMaker.image.repository`         | Override default Kafka Mirror Maker image repository                            | `nil`                        |
-| `kafkaMirrorMaker.image.name`               | Kafka Mirror Maker image name                                                   | `kafka`                      |
-| `kafkaMirrorMaker.image.tagPrefix`          | Override default Kafka Mirror Maker image tag prefix                            | `nil`                        |
-| `kafkaMirrorMaker.image.tag`                | Override default Kafka Mirror Maker image tag and ignore suffix                 | `nil`                        |
-| `kafkaMirrorMaker.image.digest`             | Override Kafka Mirror Maker image tag with digest                               | `nil`                        |
 | `cruiseControl.image.registry`              | Override default Cruise Control image registry                                  | `nil`                        |
 | `cruiseControl.image.repository`            | Override default Cruise Control image repository                                | `nil`                        |
 | `cruiseControl.image.name`                  | Cruise Control image name                                                       | `kafka`                      |
@@ -161,7 +165,7 @@ the documentation for more details.
 | `kafkaBridge.image.registry`                | Override default Kafka Bridge image registry                                    | `quay.io`                    |
 | `kafkaBridge.image.repository`              | Override default Kafka Bridge image repository                                  | `strimzi`                    |
 | `kafkaBridge.image.name`                    | Kafka Bridge image name                                                         | `kafka-bridge`               |
-| `kafkaBridge.image.tag`                     | Override default Kafka Bridge image tag                                         | `0.30.0`                     |
+| `kafkaBridge.image.tag`                     | Override default Kafka Bridge image tag                                         | `0.32.0`                     |
 | `kafkaBridge.image.digest`                  | Override Kafka Bridge image tag with digest                                     | `nil`                        |
 | `kafkaExporter.image.registry`              | Override default Kafka Exporter image registry                                  | `nil`                        |
 | `kafkaExporter.image.repository`            | Override default Kafka Exporter image repository                                | `nil`                        |
@@ -207,7 +211,7 @@ the documentation for more details.
 | `mavenBuilder.image.digest`                 | Override Maven Builder image tag with digest                                    | `nil`                        |
 | `logConfiguration`                          | Override default `log4j.properties` content                                     | `nil`                        |
 | `logLevel`                                  | Override default logging level                                                  | `INFO`                       |
-| `dashboards.enable`                         | Generate configmaps containing the dashboards                                   | `false`                      |
+| `dashboards.enabled`                        | Generate configmaps containing the dashboards                                   | `false`                      |
 | `dashboards.label`                          | How should the dashboards be labeled for the sidecar                            | `grafana_dashboard`          |
 | `dashboards.labelValue`                     | What should the dashboards label value be for the sidecar                       | `"1"`                        |
 | `dashboards.extraLabels`                    | Any additional labels you would like on the dashboards                          | `{}`                         |
@@ -217,5 +221,5 @@ the documentation for more details.
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```bash
-$ helm install my-strimzi-cluster-operator --set replicas=2 oci://quay.io/strimzi-helm/strimzi-kafka-operator
+helm install my-strimzi-cluster-operator --set replicas=2 oci://quay.io/strimzi-helm/strimzi-kafka-operator
 ```

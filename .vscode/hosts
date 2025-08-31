@@ -1,12 +1,5 @@
-# 测试
-101.132.177.167 traefik.cuiliangblog.cn minio.cuiliangblog.cn prometheus.cuiliangblog.cn grafana.cuiliangblog.cn alertmanager.cuiliangblog.cn helm.cuiliangblog.cn
-101.132.177.167 kibana.cuiliangblog.cn elasticsearch.cuiliangblog.cn kafka-ui.cuiliangblog.cn
-101.132.177.167 thanos-query.cuiliangblog.cn thanos-compact.cuiliangblog.cn thanos-receive.cuiliangblog.cn thanos-store.cuiliangblog.cn thanos-ruler.cuiliangblog.cn
-101.132.177.167 java-demo.cuiliangblog.cn python-demo.cuiliangblog.cn go-demo.cuiliangblog.cn jaeger.cuiliangblog.cn demo.cuiliangblog.cn
-
-# 工作
 # T1
-103.177.28.193 t1.dev.maka.io t1.maka.io basemodel-sh.sensetime.com grafana-bm-sh.sensetime.com prometheus-bm-sh.sensetime.com
+14.103.16.79 t1.dev.maka.io t1.maka.io basemodel-sh.sensetime.com grafana-bm-sh.sensetime.com prometheus-bm-sh.sensetime.com
 
 # T6
 14.103.16.79 t6.dev.maka.io t6.maka.io
@@ -22,11 +15,22 @@
 10.142.39.181 test.mhapi.sensetime.com
 
 # 新k8s集群
-180.184.148.135 traefik.miaohua.sensetime.com helm.miaohua.sensetime.com ceph.miaohua.sensetime.com minio.miaohua.sensetime.com
-180.184.148.135 alertmanager.miaohua.sensetime.com grafana.miaohua.sensetime.com prometheus.miaohua.sensetime.com pushgateway.miaohua.sensetime.com
-180.184.148.135 dbeaver.miaohua.sensetime.com redisinsight.miaohua.sensetime.com rabbitmq.miaohua.sensetime.com elasticsearch.miaohua.sensetime.com kibana.miaohua.sensetime.com
+10.210.4.10 traefik-mhtl.sensetime.com helm-mhtl.sensetime.com ceph-mhtl.sensetime.com minio-mhtl.sensetime.com
+10.210.4.10 alertmanager-mhtl.sensetime.com grafana-mhtl.sensetime.com prometheus-mhtl.sensetime.com pushgateway-mhtl.sensetime.com
+10.210.4.10 dbeaver-mhtl.sensetime.com redisinsight-mhtl.sensetime.com rabbitmq-mhtl.sensetime.com elasticsearch-mhtl.sensetime.com kibana-mhtl.sensetime.com
 
 # 新k8s集群服务
-180.184.148.135 l40s.dev.maka.io
-180.184.148.135 adjust-replicas.miaohua.sensetime.com
-180.184.148.135 ezone.maka.io
+10.210.4.10 l40s.dev.maka.io
+10.210.4.10 adjust-replicas-mhtl.sensetime.com
+10.210.4.10 ezone.maka.io
+
+# 服务迁移测试
+8.154.17.83 miaohua.sensetime.com
+
+# 后端
+10.142.39.181 grafana-mhapi-lgdmz-prod-diamond.sensetime.com
+
+192.168.10.10 traefik.cuiliangblog.cn minio.cuiliangblog.cn prometheus.cuiliangblog.cn grafana.cuiliangblog.cn alertmanager.cuiliangblog.cn helm.cuiliangblog.cn
+192.168.10.10 kibana.cuiliangblog.cn elasticsearch.cuiliangblog.cn kafka-ui.cuiliangblog.cn
+192.168.10.10 thanos-query.cuiliangblog.cn thanos-compact.cuiliangblog.cn thanos-receive.cuiliangblog.cn thanos-store.cuiliangblog.cn thanos-ruler.cuiliangblog.cn
+192.168.10.10 java-demo.cuiliangblog.cn python-demo.cuiliangblog.cn go-demo.cuiliangblog.cn jaeger.cuiliangblog.cn demo.cuiliangblog.cn

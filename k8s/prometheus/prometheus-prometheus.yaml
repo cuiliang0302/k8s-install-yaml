@@ -22,8 +22,6 @@ spec:
   # enableFeatures: 
   enableFeatures: # 开启远程写入
   - remote-write-receiver
-  externalLabels:
-    web.enable-remote-write-receiver: "true"
   image: quay.io/prometheus/prometheus:v2.54.1
   nodeSelector:
     kubernetes.io/os: linux
@@ -54,7 +52,12 @@ spec:
   serviceMonitorNamespaceSelector: {}
   serviceMonitorSelector: {}
   version: 2.54.1
-  externalLabels:
-    cluster: local
+  # externalLabels: # 修改额外标签，用于区分不同prometheus集群
+  #   cluster: local
+  # thanos:
+  #   image: quay.io/thanos/thanos:v0.31.0
+  #   objectStorageConfig:
+  #     key: objectstorage.yaml
+  #     name: thanos-objstore-config
   # remoteWrite:
   # - url: "http://thanos-receive-router.thanos.svc:19291/api/v1/receive"

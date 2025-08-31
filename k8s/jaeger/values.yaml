@@ -464,7 +464,7 @@ collector:
   image:
     registry: ""
     repository: jaegertracing/jaeger-collector
-    tag: ""
+    tag: "1.70.0"
     digest: ""
     pullPolicy: IfNotPresent
     pullSecrets: []
