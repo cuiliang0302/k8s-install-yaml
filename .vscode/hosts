@@ -30,7 +30,9 @@
 # 后端
 10.142.39.181 grafana-mhapi-lgdmz-prod-diamond.sensetime.com
 
+# 实验
 192.168.10.10 traefik.cuiliangblog.cn minio.cuiliangblog.cn prometheus.cuiliangblog.cn grafana.cuiliangblog.cn alertmanager.cuiliangblog.cn helm.cuiliangblog.cn
 192.168.10.10 kibana.cuiliangblog.cn elasticsearch.cuiliangblog.cn kafka-ui.cuiliangblog.cn
 192.168.10.10 thanos-query.cuiliangblog.cn thanos-compact.cuiliangblog.cn thanos-receive.cuiliangblog.cn thanos-store.cuiliangblog.cn thanos-ruler.cuiliangblog.cn
+192.168.10.10 gitlab.cuiliangblog.cn
 192.168.10.10 java-demo.cuiliangblog.cn python-demo.cuiliangblog.cn go-demo.cuiliangblog.cn jaeger.cuiliangblog.cn demo.cuiliangblog.cn

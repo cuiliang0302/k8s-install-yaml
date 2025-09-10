@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: gitlab
-          image: gitlab/gitlab-ce:16.11.1-ce.0
+          image: gitlab/gitlab-ce:18.3.1-ce.0
           env:
             - name: GITLAB_SKIP_UNMIGRATED_DATA_CHECK
               value: "true"
