@@ -6,8 +6,7 @@ metadata:
 stringData:
   alertmanager-configs.yaml: |-
     alertmanagers:
-    - static_configs: ["alertmanager-main:9093"]
-      scheme: http
-      timeout: 30s
-      api_version: v1   
+    - static_configs:
+      - "dnssrv+_web._tcp.alertmanager-main.monitoring.svc.cluster.local"
+      api_version: v2  
 type: Opaque
